@@ -1,0 +1,161 @@
+# LaneDet
+## Introduction
+LaneDet is an open source lane detection toolbox based on PyTorch that aims to pull together a wide variety of state-of-the-art lane detection models. Developers can reproduce these SOTA methods and build their own methods.
+
+![demo image](.github/_clips_0601_1494452613491980502_20.jpg)
+
+## Table of Contents
+* [Introduction](#Introduction)
+* [Benchmark and model zoo](#Benchmark-and-model-zoo)
+* [Installation](#Installation)
+* [Getting Started](#Getting-started)
+* [Contributing](#Contributing)
+* [Licenses](#Licenses)
+* [Acknowledgement](#Acknowledgement)
+
+## Benchmark and model zoo
+Supported backbones:
+- [x] ResNet
+- [x] ERFNet
+- [x] VGG
+- [ ] DLA (comming soon)
+
+Supported detectors:
+- [x] [SCNN](configs/scnn)
+- [x] [UFLD](configs/ufld)
+- [x] [RESA](configs/resa)
+- [ ] LaneATT (comming sonn)
+- [ ] LaneAF (comming sonn)
+
+## Installation
+<!--
+Please refer to [INSTALL.md](INSTALL.md) for installation.
+-->
+
+### Clone this repository
+```
+git clone https://github.com/turoad/lanedet.git
+```
+We call this directory as `$LANEDET_ROOT`
+
+### Create a conda virtual environment and activate it (conda is optional)
+
+```Shell
+conda create -n lanedet python=3.8 -y
+conda activate lanedet
+```
+
+### Install dependencies
+
+```Shell
+# Install pytorch firstly, the cudatoolkit version should be same in your system. (you can also use pip to install pytorch and torchvision)
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+
+# Or you can install via pip
+pip install torch torchvision
+
+# Install python packages
+pip install -r requirements.txt
+```
+
+### Data preparation
+
+#### CULane
+
+Download [CULane](https://xingangpan.github.io/projects/CULane.html). Then extract them to `$CULANEROOT`. Create link to `data` directory.
+
+```Shell
+cd $RESA_ROOT
+mkdir -p data
+ln -s $CULANEROOT data/CULane
+```
+
+For CULane, you should have structure like this:
+```
+$CULANEROOT/driver_xx_xxframe    # data folders x6
+$CULANEROOT/laneseg_label_w16    # lane segmentation labels
+$CULANEROOT/list                 # data lists
+```
+
+#### Tusimple
+Download [Tusimple](https://github.com/TuSimple/tusimple-benchmark/issues/3). Then extract them to `$TUSIMPLEROOT`. Create link to `data` directory.
+
+```Shell
+cd $RESA_ROOT
+mkdir -p data
+ln -s $TUSIMPLEROOT data/tusimple
+```
+
+For Tusimple, you should have structure like this:
+```
+$TUSIMPLEROOT/clips # data folders
+$TUSIMPLEROOT/lable_data_xxxx.json # label json file x4
+$TUSIMPLEROOT/test_tasks_0627.json # test tasks json file
+$TUSIMPLEROOT/test_label.json # test label json file
+
+```
+
+For Tusimple, the segmentation annotation is not provided, hence we need to generate segmentation from the json annotation. 
+
+```Shell
+python scripts/generate_seg_tusimple.py --root $TUSIMPLEROOT
+# this will generate seg_label directory
+```
+
+## Getting Started
+### Training
+
+For training, run
+
+```Shell
+python main.py [configs/path_to_your_config] --gpus [gpu_ids]
+```
+
+
+For example, run
+```Shell
+python main.py configs/resa/resa50_culane.py --gpus 0 1 2 3
+```
+
+### Testing
+For testing, run
+```Shell
+python main.py [configs/path_to_your_config] --validate --load_from [path_to_your_model] [gpu_num]
+```
+
+For example, run
+```Shell
+python main.py configs/resa/resa50_culane.py --validate --load_from culane_resnet50.pth --gpus 0 1 2 3
+```
+
+For visualization, just add `--view`.
+
+
+## Contributing
+We appreciate all contributions to improve LaneDet.  Any pull requests or issues are welcomed.
+
+## Licenses
+This project is released under the [Apache 2.0 license](LICNESE).
+
+
+## Acknowledgement
+<!--ts-->
+* [open-mmlab/mmdetection](https://github.com/open-mmlab/mmdetection)
+* [pytorch/vision](https://github.com/pytorch/vision)
+* [cardwing/Codes-for-Lane-Detection](https://github.com/cardwing/Codes-for-Lane-Detection)
+* [XingangPan/SCNN](https://github.com/XingangPan/SCNN)
+* [ZJULearning/resa](https://github.com/ZJULearning/resa)
+* [cfzd/Ultra-Fast-Lane-Detection](https://github.com/cfzd/Ultra-Fast-Lane-Detection)
+<!--te-->
+
+<!-- 
+## Citation
+If you use
+```
+@misc{zheng2021lanedet,
+  author =       {Tu Zheng},
+  title =        {LaneDet},
+  howpublished = {\url{https://github.com/turoad/lanedet}},
+  year =         {2021}
+}
+``` -->

@@ -1,0 +1,10 @@
+torch==1.1.0
+torchvision==0.2.0
+pandas
+addict
+sklearn
+opencv-python
+pytorch_warmup
+scikit-image
+tqdm
+pprint
