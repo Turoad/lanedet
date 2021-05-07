@@ -4,59 +4,41 @@ net = dict(
 
 backbone = dict(
     type='ResNetWrapper',
-    resnet='resnet50',
+    resnet='resnet18',
     pretrained=True,
     replace_stride_with_dilation=[False, True, True],
     out_conv=True,
-    in_channels=[64, 128, 256, -1]
 )
 featuremap_out_channel = 128
 featuremap_out_stride = 8
-sample_y = range(589, 230, -20)
 
 aggregator = dict(
-    type='RESA',
-    direction=['d', 'u', 'r', 'l'],
-    alpha=2.0,
-    iter=4,
-    conv_stride=9,
+    type='SCNN',
 )
 
-heads = dict( 
+sample_y=range(710, 150, -10)
+heads = dict(
     type='LaneSeg',
     decoder=dict(type='PlainDecoder'),
-    exist=dict(type='ExistHead'),
-    thr=0.3,
+    thr=0.6,
     sample_y=sample_y,
-)
-
-trainer = dict(
-    type='RESA'
-)
-
-evaluator = dict(
-    type='CULane',        
 )
 
 optimizer = dict(
   type = 'SGD',
-  lr = 0.030,
+  lr = 0.025,
   weight_decay = 1e-4,
   momentum = 0.9
 )
 
-epochs = 12
-batch_size = 8
-total_iter = (88880 // batch_size) * epochs
+epochs = 100
+batch_size = 8 
+total_iter = (3616 // batch_size + 1) * epochs 
 import math
 scheduler = dict(
     type = 'LambdaLR',
     lr_lambda = lambda _iter : math.pow(1 - _iter/total_iter, 0.9)
 )
-
-seg_loss_weight = 1.0
-eval_ep = 6
-save_ep = epochs
 
 bg_weight = 0.4
 
@@ -65,42 +47,42 @@ img_norm = dict(
     std=[1., 1., 1.]
 )
 
-img_height = 288
-img_width = 800
-cut_height = 240 
-ori_img_h = 590
-ori_img_w = 1640
+img_height = 368
+img_width = 640
+cut_height = 160
+ori_img_h = 720
+ori_img_w = 1280
 
 train_process = [
-    dict(type='RandomRotation', degree=(-2, 2)),
+    dict(type='RandomRotation'),
     dict(type='RandomHorizontalFlip'),
     dict(type='Resize', size=(img_width, img_height)),
     dict(type='Normalize', img_norm=img_norm),
-    dict(type='ToTensor', keys=['img', 'mask', 'lane_exist']),
-]
+    dict(type='ToTensor'),
+] 
 
 val_process = [
     dict(type='Resize', size=(img_width, img_height)),
     dict(type='Normalize', img_norm=img_norm),
     dict(type='ToTensor', keys=['img']),
-]
+] 
 
-dataset_path = './data/CULane'
+dataset_path = './data/tusimple'
 dataset = dict(
     train=dict(
-        type='CULane',
+        type='TuSimple',
         data_root=dataset_path,
-        split='train',
+        split='trainval',
         processes=train_process,
     ),
     val=dict(
-        type='CULane',
+        type='TuSimple',
         data_root=dataset_path,
         split='test',
         processes=val_process,
     ),
     test=dict(
-        type='CULane',
+        type='TuSimple',
         data_root=dataset_path,
         split='test',
         processes=val_process,
@@ -109,7 +91,9 @@ dataset = dict(
 
 
 workers = 12
-num_classes = 4 + 1
+num_classes = 6 + 1
 ignore_label = 255
-log_interval = 1000
-
+log_interval = 100
+eval_ep = 1
+save_ep = epochs
+test_json_file='data/tusimple/test_label.json'

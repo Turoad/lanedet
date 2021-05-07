@@ -23,11 +23,10 @@ def build_aggregator(cfg):
     return build(cfg.aggregator, AGGREGATOR, default_args=dict(cfg=cfg))
 
 def build_heads(cfg):
-    return build(cfg.heads, HEADS, default_args=dict(cfg=cfg)) 
-    heads = []
-    for head_cfg in cfg.heads:
-        heads.append(build(head_cfg, HEADS, default_args=dict(cfg=cfg))) 
-    return heads
+    return build(cfg.heads, HEADS, default_args=dict(cfg=cfg))
+
+def build_head(split_cfg, cfg):
+    return build(split_cfg, HEADS, default_args=dict(cfg=cfg))
 
 def build_net(cfg):
     return build(cfg.net, NET, default_args=dict(cfg=cfg))

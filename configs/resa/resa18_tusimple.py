@@ -1,5 +1,5 @@
 net = dict(
-    type='Segmentor',
+    type='Detector',
 )
 
 backbone = dict(
@@ -20,28 +20,23 @@ aggregator = dict(
     conv_stride=9,
 )
 
-heads = [
-    dict(type='BUSD'),
-    dict(type='ExistHead'),
-]
-
-trainer = dict(
-    type='RESA'
-)
-
-evaluator = dict(
-    type='Tusimple',        
+sample_y=range(710, 150, -10)
+heads = dict(
+    type='LaneSeg',
+    decoder=dict(type='BUSD'),
+    thr=0.6,
+    sample_y=sample_y,
 )
 
 optimizer = dict(
-  type = 'sgd',
+  type = 'SGD',
   lr = 0.025,
   weight_decay = 1e-4,
   momentum = 0.9
 )
 
 
-epochs = 100
+epochs = 150
 batch_size = 8
 total_iter = (3616 // batch_size + 1) * epochs 
 import math
@@ -60,24 +55,42 @@ img_norm = dict(
 img_height = 368
 img_width = 640
 cut_height = 160
-seg_label = "seg_label6"
+ori_img_h = 720
+ori_img_w = 1280
+
+train_process = [
+    dict(type='RandomRotation'),
+    dict(type='RandomHorizontalFlip'),
+    dict(type='Resize', size=(img_width, img_height)),
+    dict(type='Normalize', img_norm=img_norm),
+    dict(type='ToTensor'),
+] 
+
+val_process = [
+    dict(type='Resize', size=(img_width, img_height)),
+    dict(type='Normalize', img_norm=img_norm),
+    dict(type='ToTensor', keys=['img']),
+] 
 
 dataset_path = './data/tusimple'
 dataset = dict(
     train=dict(
         type='TuSimple',
-        img_path=dataset_path,
-        data_list='train_val_gt.txt'
+        data_root=dataset_path,
+        split='trainval',
+        processes=train_process,
     ),
     val=dict(
         type='TuSimple',
-        img_path=dataset_path,
-        data_list='test_gt.txt'
+        data_root=dataset_path,
+        split='test',
+        processes=val_process,
     ),
     test=dict(
         type='TuSimple',
-        img_path=dataset_path,
-        data_list='test_gt.txt'
+        data_root=dataset_path,
+        split='test',
+        processes=val_process,
     )
 )
 

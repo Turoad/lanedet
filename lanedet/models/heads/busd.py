@@ -119,8 +119,6 @@ class BUSD(nn.Module):
             output = layer(output)
 
         output = self.output_conv(output)
-        if not self.training:
-            output = F.softmax(output, dim=1)
         output = {'seg': output}
 
         return output

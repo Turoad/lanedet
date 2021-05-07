@@ -3,14 +3,16 @@
 ## Introduction
 
 ```latex
-@inproceedings{pan2018SCNN,  
-  author = {Xingang Pan, Jianping Shi, Ping Luo, Xiaogang Wang, and Xiaoou Tang},  
-  title = {Spatial As Deep: Spatial CNN for Traffic Scene Understanding},  
-  booktitle = {AAAI Conference on Artificial Intelligence (AAAI)},  
-  month = {February},  
-  year = {2018}  
+@InProceedings{qin2020ultra,
+author = {Qin, Zequn and Wang, Huanyu and Li, Xi},
+title = {Ultra Fast Structure-aware Deep Lane Detection},
+booktitle = {The European Conference on Computer Vision (ECCV)},
+year = {2020}
 }
 ```
 
-## Model
-comming soon
+## Models
+| Architecture| Backbone |Dataset | Metric | Config| Checkpoints  |
+|-------------|----------|--------|--------|-------|--------------|
+| UFLD      | ResNet18 | CULane || [config](https://github.com/Turoad/lanedet/blob/main/configs/ufld/resa18_culane.py)  | comming soon|
+| UFLD        | ResNet18 | Tusimple || [config](https://github.com/Turoad/lanedet/blob/main/configs/ufld/resa18_culane.py)  | comming soon|

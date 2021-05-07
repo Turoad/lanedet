@@ -4,7 +4,7 @@ net = dict(
 
 backbone = dict(
     type='ResNetWrapper',
-    resnet='resnet50',
+    resnet='resnet34',
     pretrained=True,
     replace_stride_with_dilation=[False, True, True],
     out_conv=True,

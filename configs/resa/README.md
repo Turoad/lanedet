@@ -14,4 +14,10 @@
 ```
 
 ## Models
-comming soon
+
+| Architecture| Backbone |Dataset | Metric | Config| Checkpoints  |
+|-------------|----------|--------|--------|-------|--------------|
+| RESA        | ResNet50 | CULane || [config](https://github.com/Turoad/lanedet/blob/main/configs/resa/resa50_culane.py)  | comming soon|
+| RESA        | ResNet34 | CULane || [config](https://github.com/Turoad/lanedet/blob/main/configs/resa/resa34_culane.py)  | comming soon|
+| RESA        | ResNet34 | Tusimple || [config](https://github.com/Turoad/lanedet/blob/main/configs/resa/resa34_tusimple.py)  |comming soon|
+| RESA        | ResNet18 | Tusimple || [config](https://github.com/Turoad/lanedet/blob/main/configs/resa/resa18_tusimple.py)  |comming soon|

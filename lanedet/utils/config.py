@@ -123,7 +123,7 @@ class Config:
         else:
             raise IOError('Only py/yml/yaml/json type are supported now!')
 
-        cfg_text = filename + '\n'
+        cfg_text = ''
         with open(filename, 'r') as f:
             cfg_text += f.read()
 

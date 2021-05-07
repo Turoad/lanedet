@@ -1,81 +1,90 @@
 import os
 import os.path as osp
 import numpy as np
-import torchvision
-import lanedet.utils.transforms as tf
 from .base_dataset import BaseDataset
 from .registry import DATASETS
+import lanedet.utils.culane_metric as culane_metric
 import cv2
-import torch
+from tqdm import tqdm
+import logging
 
+LIST_FILE = {
+    'train': 'list/train_gt.txt',
+    'val': 'list/test.txt',
+    'test': 'list/test.txt',
+} 
 
 @DATASETS.register_module
 class CULane(BaseDataset):
-    def __init__(self, img_path, data_list, cfg=None):
-        super().__init__(img_path, data_list, cfg=cfg)
-        self.ori_imgh = 590
-        self.ori_imgw = 1640
+    def __init__(self, data_root, split, processes=None, cfg=None):
+        super().__init__(data_root, split, processes=processes, cfg=cfg)
+        self.list_path = osp.join(data_root, LIST_FILE[split])
+        self.load_annotations()
 
-    def init(self):
-        with open(osp.join(self.list_path, self.data_list)) as f:
-            for line in f:
-                line_split = line.strip().split(" ")
-                self.img_name_list.append(line_split[0])
-                self.full_img_path_list.append(self.img_path + line_split[0])
-                self.label_list.append(self.img_path + line_split[1])
-                self.exist_list.append(
-                    np.array([int(line_split[2]), int(line_split[3]),
-                              int(line_split[4]), int(line_split[5])]))
+    def load_annotations(self):
+        self.logger.info('Loading CULane annotations...')
+        self.data_infos = []
+        with open(self.list_path) as list_file:
+            for line in list_file:
+                infos = self.load_annotation(line.split())
+                self.data_infos.append(infos)
 
-    def transform_train(self):
-        train_transform = torchvision.transforms.Compose([
-            tf.GroupRandomRotation(degree=(-2, 2)),
-            tf.GroupRandomHorizontalFlip(),
-            tf.SampleResize((self.cfg.img_width, self.cfg.img_height)),
-            tf.GroupNormalize(mean=(self.cfg.img_norm['mean'], (0, )), std=(
-                self.cfg.img_norm['std'], (1, ))),
-        ])
-        return train_transform
+    def load_annotation(self, line):
+        infos = {}
+        img_line = line[0]
+        img_line = img_line[1 if img_line[0] == '/' else 0::]
+        img_path = os.path.join(self.data_root, img_line)
+        infos['img_name'] = img_line 
+        infos['img_path'] = img_path
+        if len(line) > 1:
+            mask_line = line[1]
+            mask_line = mask_line[1 if mask_line[0] == '/' else 0::]
+            mask_path = os.path.join(self.data_root, mask_line)
+            infos['mask_path'] = mask_path
 
-    def get_lane(self, output):
-        segs, exists = output['seg'], output['exist']
-        segs = segs.cpu().numpy()
-        exists = exists.cpu().numpy()
-        ret = []
-        for seg, exist in zip(segs, exists):
-            lanes = self.probmap2lane(seg, exist)
-            ret.append(lanes)
-        return ret
+        if len(line) > 2:
+            exist_list = [int(l) for l in line[2:]]
+            infos['lane_exist'] = np.array(exist_list)
 
+        anno_path = img_path[:-3] + 'lines.txt'  # remove sufix jpg and add lines.txt
+        with open(anno_path, 'r') as anno_file:
+            data = [list(map(float, line.split())) for line in anno_file.readlines()]
+        lanes = [[(lane[i], lane[i + 1]) for i in range(0, len(lane), 2) if lane[i] >= 0 and lane[i + 1] >= 0]
+                 for lane in data]
+        lanes = [list(set(lane)) for lane in lanes]  # remove duplicated points
+        lanes = [lane for lane in lanes if len(lane) >= 2]  # remove lanes with less than 2 points
 
-    def probmap2lane(self, probmaps, exists, pts=18):
-        coords = []
-        probmaps = probmaps[1:, ...]
-        exists = exists > 0.5
-        for probmap, exist in zip(probmaps, exists):
-            if exist == 0:
-                continue
-            probmap = cv2.blur(probmap, (9, 9), borderType=cv2.BORDER_REPLICATE)
-            thr = 0.3
-            coordinate = np.zeros(pts)
-            cut_height = self.cfg.cut_height
-            for i in range(pts):
-                line = probmap[round(
-                    self.cfg.img_height-i*20/(self.ori_imgh-cut_height)*self.cfg.img_height)-1]
+        lanes = [sorted(lane, key=lambda x: x[1]) for lane in lanes]  # sort by y
+        infos['lanes'] = lanes
 
-                if np.max(line) > thr:
-                    coordinate[i] = np.argmax(line)+1
-            if np.sum(coordinate > 0) < 2:
-                continue
-    
-            img_coord = np.zeros((pts, 2))
-            img_coord[:, :] = -1
-            for idx, value in enumerate(coordinate):
-                if value > 0:
-                    img_coord[idx][0] = round(value*self.ori_imgw/self.cfg.img_width-1)
-                    img_coord[idx][1] = round(self.ori_imgh-idx*20-1)
-    
-            img_coord = img_coord.astype(int)
-            coords.append(img_coord)
-    
-        return coords
+        return infos
+
+    def get_prediction_string(self, pred):
+        ys = np.arange(self.cfg.ori_img_h) / self.cfg.ori_img_h
+        ys = np.arange(239, 590, 1) / self.cfg.ori_img_h
+        out = []
+        for lane in pred:
+            xs = lane(ys)
+            valid_mask = (xs >= 0) & (xs < 1)
+            xs = xs * self.cfg.ori_img_w
+            lane_xs = xs[valid_mask]
+            lane_ys = ys[valid_mask] * self.cfg.ori_img_h
+            lane_xs, lane_ys = lane_xs[::-1], lane_ys[::-1]
+            lane_str = ' '.join(['{:.5f} {:.5f}'.format(x, y) for x, y in zip(lane_xs, lane_ys)])
+            if lane_str != '':
+                out.append(lane_str)
+
+        return '\n'.join(out)
+
+    def evaluate(self, predictions, output_basedir):
+        print('Generating prediction output...')
+        for idx, pred in enumerate(tqdm(predictions)):
+            output_dir = os.path.join(output_basedir, os.path.dirname(self.data_infos[idx]['img_name']))
+            output_filename = os.path.basename(self.data_infos[idx]['img_name'])[:-3] + 'lines.txt'
+            os.makedirs(output_dir, exist_ok=True)
+            output = self.get_prediction_string(pred)
+            with open(os.path.join(output_dir, output_filename), 'w') as out_file:
+                out_file.write(output)
+        result = culane_metric.eval_predictions(output_basedir, self.data_root, self.list_path, official=True)
+        self.logger.info(result)
+        return result['F1']

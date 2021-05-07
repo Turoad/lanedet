@@ -1,5 +1,5 @@
 net = dict(
-    type='Segmentor',
+    type='Detector',
 )
 
 backbone = dict(
@@ -15,10 +15,8 @@ aggregator=None
 
 griding_num = 100
 num_classes = 6
-heads = [
-    dict(type='LaneCls',
+heads = dict(type='LaneCls',
         dim = (griding_num + 1, 56, num_classes))
-]
 
 trainer = dict(
     type='LaneCls'
@@ -28,13 +26,6 @@ evaluator = dict(
     type='Tusimple',
 )
 
-optimizer = dict(
-  type = 'sgd',
-  lr = 0.030,
-  weight_decay = 1e-4,
-  momentum = 0.9
-)
-
 import math
 scheduler = dict(
     type = 'LambdaLR',
@@ -42,13 +33,13 @@ scheduler = dict(
 )
 
 optimizer = dict(
-  type = 'sgd',
+  type = 'SGD',
   lr = 0.025,
   weight_decay = 1e-4,
   momentum = 0.9
 )
 
-epochs = 100
+epochs = 150
 batch_size = 4
 total_iter = (3616 // batch_size + 1) * epochs 
 import math
@@ -67,25 +58,51 @@ ori_img_h = 720
 ori_img_w = 1280
 img_h = 288
 img_w = 800
+cut_height=0
+sample_y = range(710, 150, -10)
 
+dataset_type = 'TuSimple'
 dataset_path = './data/tusimple'
+row_anchor = 'tusimple_row_anchor'
+
+train_process = [
+    dict(type='RandomRotation', degree=(-6, 6)),
+    dict(type='RandomUDoffsetLABEL', max_offset=100),
+    dict(type='RandomLROffsetLABEL', max_offset=200),
+    dict(type='GenerateLaneCls', row_anchor=row_anchor,
+        num_cols=griding_num, num_classes=num_classes),
+    dict(type='Resize', size=(img_w, img_h)),
+    dict(type='Normalize', img_norm=img_norm),
+    dict(type='ToTensor', keys=['img', 'cls_label']),
+]
+
+val_process = [
+    dict(type='Resize', size=(img_w, img_h)),
+    dict(type='Normalize', img_norm=img_norm),
+    dict(type='ToTensor', keys=['img']),
+]
+
 dataset = dict(
     train=dict(
-        type='LaneClsDataset',
-        img_path=dataset_path,
-        data_list='seg_label/list/train_val_gt.txt'
+        type=dataset_type,
+        data_root=dataset_path,
+        split='trainval',
+        processes=train_process,
     ),
     val=dict(
-        type='LaneClsDataset',
-        img_path=dataset_path,
-        data_list='seg_label/list/test_gt.txt'
+        type=dataset_type,
+        data_root=dataset_path,
+        split='test',
+        processes=val_process,
     ),
     test=dict(
-        type='LaneClsDataset',
-        img_path=dataset_path,
-        data_list='seg_label/list/test_gt.txt'
+        type=dataset_type,
+        data_root=dataset_path,
+        split='test',
+        processes=val_process,
     )
 )
+
 
 workers = 12
 ignore_label = 255
@@ -94,4 +111,3 @@ eval_ep = 1
 save_ep = epochs
 row_anchor='tusimple_row_anchor'
 test_json_file='data/tusimple/test_label.json'
-y_pixel_gap = 10

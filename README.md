@@ -24,7 +24,7 @@ Supported detectors:
 - [x] [SCNN](configs/scnn)
 - [x] [UFLD](configs/ufld)
 - [x] [RESA](configs/resa)
-- [ ] LaneATT (comming sonn)
+- [x] [LaneATT](configs/laneatt)
 - [ ] LaneAF (comming sonn)
 
 ## Installation
@@ -55,7 +55,7 @@ conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
 pip install torch torchvision
 
 # Install python packages
-pip install -r requirements.txt
+python setup.py build develop
 ```
 
 ### Data preparation
@@ -98,7 +98,7 @@ $TUSIMPLEROOT/test_label.json # test label json file
 For Tusimple, the segmentation annotation is not provided, hence we need to generate segmentation from the json annotation. 
 
 ```Shell
-python scripts/generate_seg_tusimple.py --root $TUSIMPLEROOT
+python tools/generate_seg_tusimple.py --root $TUSIMPLEROOT
 # this will generate seg_label directory
 ```
 
@@ -128,7 +128,13 @@ For example, run
 python main.py configs/resa/resa50_culane.py --validate --load_from culane_resnet50.pth --gpus 0 1 2 3
 ```
 
-For visualization, just add `--view`.
+Currently, this code can output the visualization result when testing, just add `--view`.
+We will get the visualization result in `work_dirs/xxx/xxx/visualization`.
+
+For example, run
+```Shell
+python main.py configs/resa/resa50_culane.py --validate --load_from culane_resnet50.pth --gpus 0 --view
+```
 
 
 ## Contributing
@@ -146,6 +152,7 @@ This project is released under the [Apache 2.0 license](LICNESE).
 * [XingangPan/SCNN](https://github.com/XingangPan/SCNN)
 * [ZJULearning/resa](https://github.com/ZJULearning/resa)
 * [cfzd/Ultra-Fast-Lane-Detection](https://github.com/cfzd/Ultra-Fast-Lane-Detection)
+* [lucastabelini/LaneATT](https://github.com/lucastabelini/LaneATT)
 <!--te-->
 
 <!-- 

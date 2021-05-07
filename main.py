@@ -3,8 +3,10 @@ import torch
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import argparse
+import numpy as np
+import random
 from lanedet.utils.config import Config
-from lanedet.runner.runner import Runner 
+from lanedet.engine.runner import Runner 
 from lanedet.datasets import build_dataloader
 
 
@@ -18,17 +20,17 @@ def main():
     cfg.load_from = args.load_from
     cfg.finetune_from = args.finetune_from
     cfg.view = args.view
+    cfg.seed = args.seed
 
-    cfg.work_dirs = args.work_dirs + '/' + cfg.evaluator.type
+    cfg.work_dirs = args.work_dirs + '/' + cfg.dataset.train.type
 
     cudnn.benchmark = True
-    cudnn.fastest = True
+    # cudnn.fastest = True
 
     runner = Runner(cfg)
 
     if args.validate:
-        val_loader = build_dataloader(cfg.dataset.val, cfg, is_train=False)
-        runner.validate(val_loader)
+        runner.validate()
     else:
         runner.train()
 
@@ -53,7 +55,7 @@ def parse_args():
         help='whether to evaluate the checkpoint during training')
     parser.add_argument('--gpus', nargs='+', type=int, default='0')
     parser.add_argument('--seed', type=int,
-                        default=None, help='random seed')
+                        default=0, help='random seed')
     args = parser.parse_args()
 
     return args

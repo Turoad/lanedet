@@ -6,7 +6,7 @@ backbone = dict(
     type='ResNetWrapper',
     resnet='resnet50',
     pretrained=True,
-    replace_stride_with_dilation=[False, True, True],
+    replace_stride_with_dilation=[False, True, False],
     out_conv=True,
     in_channels=[64, 128, 256, -1]
 )
@@ -15,11 +15,7 @@ featuremap_out_stride = 8
 sample_y = range(589, 230, -20)
 
 aggregator = dict(
-    type='RESA',
-    direction=['d', 'u', 'r', 'l'],
-    alpha=2.0,
-    iter=4,
-    conv_stride=9,
+    type='SCNN',
 )
 
 heads = dict( 
@@ -30,17 +26,9 @@ heads = dict(
     sample_y=sample_y,
 )
 
-trainer = dict(
-    type='RESA'
-)
-
-evaluator = dict(
-    type='CULane',        
-)
-
 optimizer = dict(
   type = 'SGD',
-  lr = 0.030,
+  lr = 0.005,
   weight_decay = 1e-4,
   momentum = 0.9
 )
@@ -106,7 +94,6 @@ dataset = dict(
         processes=val_process,
     )
 )
-
 
 workers = 12
 num_classes = 4 + 1

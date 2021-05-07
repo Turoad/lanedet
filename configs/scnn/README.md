@@ -13,4 +13,7 @@
 ```
 
 ## Models
-comming soon
+| Architecture| Backbone |Dataset | Metric | Config| Checkpoints  |
+|-------------|----------|--------|--------|-------|--------------|
+| SCNN       | ResNet50 | CULane || [config](https://github.com/Turoad/lanedet/blob/main/configs/scnn/resa18_culane.py)  | comming soon|
+| SCNN       | ResNet18 | Tusimple || [config](https://github.com/Turoad/lanedet/blob/main/configs/scnn/resa18_culane.py)  | comming soon|
