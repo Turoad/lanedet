@@ -15,5 +15,5 @@
 ## Models
 | Architecture| Backbone |Dataset | Metric | Config| Checkpoints  |
 |-------------|----------|--------|--------|-------|--------------|
-| SCNN       | ResNet50 | CULane || [config](https://github.com/Turoad/lanedet/blob/main/configs/scnn/resa18_culane.py)  | comming soon|
-| SCNN       | ResNet18 | Tusimple || [config](https://github.com/Turoad/lanedet/blob/main/configs/scnn/resa18_culane.py)  | comming soon|
+| SCNN       | ResNet50 | CULane | F1: 74.74| [config](https://github.com/Turoad/lanedet/blob/main/configs/scnn/resa18_culane.py)  |[model](https://github.com/Turoad/lanedet/releases/download/1.0/scnn_r50_culane.zip) |
+| SCNN       | ResNet18 | Tusimple |acc: 96.13| [config](https://github.com/Turoad/lanedet/blob/main/configs/scnn/resa18_culane.py)  | [model](https://github.com/Turoad/lanedet/releases/download/1.0/scnn_r18_tusimple.zip)|
