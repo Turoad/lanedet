@@ -25,7 +25,7 @@ Supported detectors:
 - [x] [UFLD](configs/ufld)
 - [x] [RESA](configs/resa)
 - [x] [LaneATT](configs/laneatt)
-- [ ] LaneAF (comming sonn)
+- [ ] LaneAF (comming soon)
 
 ## Installation
 <!--
