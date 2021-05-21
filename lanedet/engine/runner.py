@@ -106,7 +106,7 @@ class Runner(object):
                 output = self.net(data)
                 predictions.extend(output)
             if self.cfg.view:
-                self.val_loader.dataset.view(predictions, data['meta'])
+                self.val_loader.dataset.view(output, data['meta'])
 
         out = self.val_loader.dataset.evaluate(predictions, self.cfg.work_dir)
         self.recorder.logger.info(out)

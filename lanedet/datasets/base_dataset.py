@@ -8,6 +8,7 @@ import torchvision
 import logging
 from .registry import DATASETS
 from .process import Process
+from lanedet.utils.visualization import imshow_lanes
 
 
 @DATASETS.register_module
@@ -25,18 +26,9 @@ class BaseDataset(Dataset):
         img_names = img_meta['img_name']
         for lanes, img_name in zip(predictions, img_names):
             img = cv2.imread(osp.join(self.data_root, img_name))
+            out_file = osp.join(self.cfg.work_dir, 'visualization', img_name.replace('/', '_'))
             lanes = [lane.to_array(self.cfg) for lane in lanes]
-            for lane in lanes:
-                for x, y in lane:
-                    if x <= 0 or y <= 0:
-                        continue
-                    x, y = int(x), int(y)
-                    cv2.circle(img, (x, y), 4, (255, 0, 0), 2)
-
-            save_path = osp.join(self.cfg.work_dir, 'visualization', img_name.replace('/', '_'))
-            if not os.path.exists(osp.dirname(save_path)):
-                os.makedirs(osp.dirname(save_path))
-            cv2.imwrite(save_path, img)
+            imshow_lanes(img, lanes, out_file=out_file)
 
     def __len__(self):
         return len(self.data_infos)
