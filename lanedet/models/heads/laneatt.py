@@ -28,10 +28,8 @@ class LaneATT(nn.Module):
                  cfg=None):
         super(LaneATT, self).__init__()
         self.cfg = cfg
-        # Some definitions
-        # self.feature_extractor, backbone_nb_channels, self.stride = get_backbone(backbone, pretrained_backbone)
-        backbone_nb_channels = 512
-        self.stride = 32
+        backbone_nb_channels = cfg.featuremap_out_channel
+        self.stride = cfg.featuremap_out_stride
         self.img_w = img_w
         self.n_strips = S - 1
         self.n_offsets = S
