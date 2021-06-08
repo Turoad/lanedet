@@ -4,6 +4,7 @@ import torch.nn as nn
 BACKBONE = Registry('backbone')
 AGGREGATOR = Registry('aggregator')
 HEADS = Registry('heads')
+NECKS = Registry('necks')
 NET = Registry('net')
 
 def build(cfg, registry, default_args=None):
@@ -16,7 +17,7 @@ def build(cfg, registry, default_args=None):
         return build_from_cfg(cfg, registry, default_args)
 
 
-def build_backbone(cfg):
+def build_backbones(cfg):
     return build(cfg.backbone, BACKBONE, default_args=dict(cfg=cfg))
 
 def build_aggregator(cfg):
@@ -30,3 +31,6 @@ def build_head(split_cfg, cfg):
 
 def build_net(cfg):
     return build(cfg.net, NET, default_args=dict(cfg=cfg))
+
+def build_necks(cfg):
+    return build(cfg.neck, NECKS, default_args=dict(cfg=cfg))

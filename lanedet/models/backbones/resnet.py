@@ -238,17 +238,23 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        if self.in_channels[3] > 0:
-            x = self.layer4(x)
+        # x = self.layer1(x)
+        # x = self.layer2(x)
+        # out_layers.append(x)
+        # x = self.layer3(x)
+        # out_layers.append(x)
+        # if self.in_channels[3] > 0:
+        #     x = self.layer4(x)
+        #     out_layers.append(x)
 
-        # x = self.avgpool(x)
-        # x = torch.flatten(x, 1)
-        # x = self.fc(x)
+        out_layers = [] 
+        for name in ['layer1', 'layer2', 'layer3', 'layer4']:
+            layer = getattr(self, name)
+            x = layer(x)
+            out_layers.append(x)
+            #out_layer[name] = x
 
-        return x
+        return out_layers 
 
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):

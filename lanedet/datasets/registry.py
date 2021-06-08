@@ -4,6 +4,7 @@ import torch
 from functools import partial
 import numpy as np
 import random
+from mmcv.parallel import collate
 
 DATASETS = Registry('datasets')
 PROCESS = Registry('process')
@@ -31,15 +32,18 @@ def build_dataloader(split_cfg, cfg, is_train=True):
         shuffle = True
     else:
         shuffle = False
+    batch_size=cfg.batch_size
 
     dataset = build_dataset(split_cfg, cfg)
 
     init_fn = partial(
             worker_init_fn, seed=cfg.seed)
 
+    samples_per_gpu = batch_size#cfg.batch_size // cfg.gpus
     data_loader = torch.utils.data.DataLoader(
-        dataset, batch_size = cfg.batch_size, shuffle = shuffle,
+        dataset, batch_size = batch_size, shuffle = shuffle,
         num_workers = cfg.workers, pin_memory = False, drop_last = False,
+        collate_fn=partial(collate, samples_per_gpu=samples_per_gpu),
         worker_init_fn=init_fn)
 
     return data_loader

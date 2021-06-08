@@ -35,7 +35,7 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, idx):
         data_info = self.data_infos[idx]
-        img = cv2.imread(data_info['img_path']).astype(np.float32)
+        img = cv2.imread(data_info['img_path'])#.astype(np.float32)
         img = img[self.cfg.cut_height:, :, :]
         sample = data_info.copy()
         sample.update({'img': img})
@@ -49,8 +49,8 @@ class BaseDataset(Dataset):
             sample.update({'mask': label})
 
         sample = self.processes(sample)
-        meta = {'full_img_path': data_info['img_path'],
-                'img_name': data_info['img_name']}
-        sample.update({'meta': meta})
+        # meta = {'full_img_path': data_info['img_path'],
+        #         'img_name': data_info['img_name']}
+        # sample.update({'meta': meta})
 
         return sample 

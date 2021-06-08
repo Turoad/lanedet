@@ -45,4 +45,4 @@ def load_network(net, model_dir, finetune_from=None, logger=None):
         load_network_specified(net, finetune_from, logger)
         return
     pretrained_model = torch.load(model_dir)
-    net.load_state_dict(pretrained_model['net'], strict=True)
+    print(net.load_state_dict(pretrained_model['net'], strict=False))
