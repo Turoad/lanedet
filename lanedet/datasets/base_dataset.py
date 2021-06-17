@@ -35,6 +35,9 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, idx):
         data_info = self.data_infos[idx]
+        if not osp.isfile(data_info['img_path']):
+            raise FileNotFoundError('cannot find file: {}'.format(data_info['img_path']))
+
         img = cv2.imread(data_info['img_path']).astype(np.float32)
         img = img[self.cfg.cut_height:, :, :]
         sample = data_info.copy()
