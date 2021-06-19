@@ -403,7 +403,7 @@ class CtnetHead(nn.Module):
                 fill_fc_weights(fc)
             self.__setattr__(head, fc)
 
-    def forward(self, x):
+    def forward(self, x, **kwargs):
         if isinstance(x, list) or isinstance(x, tuple):
             x = x[0]
         z = {}
@@ -960,9 +960,7 @@ class CondLaneHead(nn.Module):
         h_mask, w_mask = f_mask.size()[2:]
         hms, params = z['hm'], z['params']
         hms = torch.clamp(hms.sigmoid(), min=1e-4, max=1 - 1e-4)
-        print(params.shape)
         params = params.view(m_batchsize, self.num_classes, -1, h_hm, w_hm)
-        print(params.shape)
         # with Timer("Elapsed time in two branch: %f"):  # 0.6ms
         mask_branchs = self.mask_branch(f_mask)
         reg_branchs = mask_branchs
@@ -1020,11 +1018,9 @@ class CondLaneHead(nn.Module):
     def forward(
             self,
             x_list,
-            hm_thr=0.5,
-            batch=None,
-    ):
+            **kwargs):
         if self.training:
-            return self.forward_train(x_list, batch)
+            return self.forward_train(x_list, kwargs['batch'])
         return self.forward_test(x_list, )
 
     def get_lanes(self, output):

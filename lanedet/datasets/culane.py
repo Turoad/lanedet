@@ -49,31 +49,25 @@ class CULane(BaseDataset):
         anno_path = img_path[:-3] + 'lines.txt'  # remove sufix jpg and add lines.txt
         with open(anno_path, 'r') as anno_file:
             data = [list(map(float, line.split())) for line in anno_file.readlines()]
-        # lanes = [[(lane[i], lane[i + 1]) for i in range(0, len(lane), 2) if lane[i] >= 0 and lane[i + 1] >= 0]
-        #          for lane in data]
-        # lanes = [list(set(lane)) for lane in lanes]  # remove duplicated points
-        # lanes = [lane for lane in lanes if len(lane) >= 2]  # remove lanes with less than 2 points
+        lanes = [[(lane[i], lane[i + 1]) for i in range(0, len(lane), 2) if lane[i] >= 0 and lane[i + 1] >= 0]
+                 for lane in data]
+        lanes = [list(set(lane)) for lane in lanes]  # remove duplicated points
+        lanes = [lane for lane in lanes if len(lane) >= 2]  # remove lanes with less than 2 points
 
-        # lanes = [sorted(lane, key=lambda x: x[1]) for lane in lanes]  # sort by y
-        gt_points = [[float(lane[i]) for i in range(len(lane))] for lane in data]
-        gt_points = [gt_point for gt_point in gt_points if len(gt_point) > 3]
-        #infos['lanes'] = lanes
-        infos['gt_points'] = gt_points
+        lanes = [sorted(lane, key=lambda x: x[1]) for lane in lanes]  # sort by y
+        # gt_points = [[float(lane[i]) for i in range(len(lane))] for lane in data]
+        # gt_points = [gt_point for gt_point in gt_points if len(gt_point) > 3]
+        infos['lanes'] = lanes
+        #infos['gt_points'] = gt_points
         infos['id_classes'] = [1 for i in range(len(gt_points))]
         infos['id_instances'] = [i + 1 for i in range(len(gt_points))]
 
         return infos
 
     def get_prediction_string(self, pred):
-        ys = np.arange(self.cfg.ori_img_h) / self.cfg.ori_img_h
         ys = np.arange(270, 590, 8) / self.cfg.ori_img_h
         out = []
         for lane in pred:
-            # points = lane.points
-            # lane_str = ' '.join(['{:.5f} {:.5f}'.format(x, y) for x, y in points])
-            # if lane_str != '':
-            #     out.append(lane_str)
-            # continue
             xs = lane(ys)
             valid_mask = (xs >= 0) & (xs < 1)
             xs = xs * self.cfg.ori_img_w

@@ -79,7 +79,7 @@ class LaneATT(nn.Module):
         self.cut_xs = self.cut_xs.cuda()
         self.invalid_mask = self.invalid_mask.cuda()
 
-    def forward(self, x, conf_threshold=None, nms_thres=0, nms_topk=3000):
+    def forward(self, x, **kwargs):
         param = self.cfg.train_parameters if self.training else self.cfg.test_parameters
         conf_threshold=param.conf_threshold
         nms_thres=param.nms_thres

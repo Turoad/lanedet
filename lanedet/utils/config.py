@@ -340,6 +340,10 @@ class Config:
     def __iter__(self):
         return iter(self._cfg_dict)
 
+
+    def haskey(self, name):
+        return hasattr(self._cfg_dict, name)
+
     def dump(self, file=None):
         cfg_dict = super(Config, self).__getattribute__('_cfg_dict').to_dict()
         if self.filename.endswith('.py'):

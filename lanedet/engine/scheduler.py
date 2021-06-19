@@ -1,14 +1,6 @@
 import torch
 import math
 
-
-_scheduler_factory = {
-    'LambdaLR': torch.optim.lr_scheduler.LambdaLR,
-    'CosineAnnealingLR': torch.optim.lr_scheduler.CosineAnnealingLR,
-    'StepLR': torch.optim.lr_scheduler.StepLR,
-}
-
-
 def build_scheduler(cfg, optimizer):
 
     cfg_cp = cfg.scheduler.copy()

@@ -106,6 +106,10 @@ class Alaug(object):
             masks = data['gt_masks']
         else:
             masks = None
+
+        if 'mask' in data:
+            masks = data['mask']
+
         if 'gt_keypoints' in data:
             keypoints = data["gt_keypoints"]
             kp_group_num = len(keypoints)
@@ -154,6 +158,9 @@ class Alaug(object):
                 data['gt_labels'] = np.array(aug['bbox_labels'])
             else:
                 return None
+        if 'mask' in data:
+            data['mask'] = np.array(aug['mask'])
+
         if 'gt_masks' in data:
             data['gt_masks'] = [np.array(aug['mask'])]
         if 'gt_keypoints' in data:

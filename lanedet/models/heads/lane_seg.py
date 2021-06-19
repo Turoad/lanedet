@@ -92,7 +92,7 @@ class LaneSeg(nn.Module):
         return ret
 
 
-    def forward(self, x):
+    def forward(self, x, **kwargs):
         output = {}
         output.update(self.decoder(x))
         if self.exist:

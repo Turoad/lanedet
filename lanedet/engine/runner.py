@@ -69,6 +69,8 @@ class Runner(object):
             loss = output['loss']
             loss.backward()
             self.optimizer.step()
+            if not self.cfg.lr_update_by_epoch:
+                self.scheduler.step()
             if self.warmup_scheduler:
                 self.warmup_scheduler.dampen()
             batch_time = time.time() - end
@@ -96,7 +98,8 @@ class Runner(object):
                 self.validate()
             if self.recorder.step >= self.cfg.total_iter:
                 break
-            self.scheduler.step()
+            if self.cfg.lr_update_by_epoch:
+                self.scheduler.step()
 
     def validate(self):
         if not self.val_loader:

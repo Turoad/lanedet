@@ -11,16 +11,19 @@ class Detector(nn.Module):
         super(Detector, self).__init__()
         self.cfg = cfg
         self.backbone = build_backbones(cfg)
-        self.aggregator = build_aggregator(cfg) if cfg.aggregator else None
-        self.neck = build_necks(cfg) if cfg.neck else None
+        self.aggregator = build_aggregator(cfg) if cfg.haskey('aggregator') else None
+        self.neck = build_necks(cfg) if cfg.haskey('neck') else None
         self.heads = build_heads(cfg)
+    
+    def get_lanes(self):
+        return self.heads.get_lanes(output)
 
     def forward(self, batch):
         output = {}
         fea = self.backbone(batch['img'])
 
         if self.aggregator:
-            fea[-1] = self.aggregator(fea[-1])
+            fea = self.aggregator(fea[-1])
 
         if self.neck:
             fea = self.neck(fea)

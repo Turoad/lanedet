@@ -146,7 +146,7 @@ class ResNetWrapper(nn.Module):
     def forward(self, x):
         x = self.model(x)
         if self.out:
-            x = self.out(x)
+            x[-1] = self.out(x[-1])
         return x
 
 
@@ -249,6 +249,8 @@ class ResNet(nn.Module):
 
         out_layers = [] 
         for name in ['layer1', 'layer2', 'layer3', 'layer4']:
+            if not hasattr(self, name):
+                continue
             layer = getattr(self, name)
             x = layer(x)
             out_layers.append(x)
