@@ -228,9 +228,12 @@ class CollectLane(object):
 
         # gt heatmap and ins of bank
         gt_points = results['gt_points']
+        # gt_points = results['lanes']
         valid_gt = []
         for pts in gt_points:
             id_class = 1
+            # pts = np.array(pts) / self.down_scale
+            #pts = [(pt[0]/self.down_scale, pt[1]/self.down_scale) for pt in pts]
             pts = convert_list(pts, self.down_scale)
             pts = sorted(pts, key=cmp_to_key(lambda a, b: b[-1] - a[-1]))
             pts = clamp_line(
@@ -240,21 +243,20 @@ class CollectLane(object):
 
         # draw gt_hm_lane
         gt_hm_lane_ends = []
-        radius = []
         for l in valid_gt:
             label = l[1]
             point = (l[0][0][0] * ratio_hm_mask, l[0][0][1] * ratio_hm_mask)
             gt_hm_lane_ends.append([point, l[0]])
-        for i, p in enumerate(gt_hm_lane_ends):
-            r = self.radius
-            radius.append(r)
+        radius = [self.radius for _ in range(len(gt_hm_lane_ends))]
 
-        if len(gt_hm_lane_ends) >= 2:
-            endpoints = [p[0] for p in gt_hm_lane_ends]
-            for j in range(len(endpoints)):
-                dis = min_dis_one_point(endpoints, j)
-                if dis < 1.5 * radius[j]:
-                    radius[j] = int(max(dis / 1.5, 1) + 0.49999)
+        # if len(gt_hm_lane_ends) >= 2:
+        #     endpoints = [p[0] for p in gt_hm_lane_ends]
+        #     for j in range(len(endpoints)):
+        #         dis = min_dis_one_point(endpoints, j)
+        #         if dis < 1.5 * radius[j]:
+        #             raise False
+        #             radius[j] = int(max(dis / 1.5, 1) + 0.49999)
+
         for (end_point, line), r in zip(gt_hm_lane_ends, radius):
             pos = np.zeros((mask_h), np.float32)
             pos_mask = np.zeros((mask_h), np.float32)

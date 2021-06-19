@@ -140,12 +140,21 @@ class Alaug(object):
             else:
                 keypoints_val = keypoints_val + points_val
 
+        if 'lanes' in data:
+            points_val = []
+            for lane in data['lanes']:
+                points_val.extend(lane)
+
+            points_index = [len(lane) for lane in data['lanes']]
+            keypoints_val = points_val
+
         aug = self.__augmentor(
             image=img,
             keypoints=keypoints_val,
             bboxes=bboxes,
             mask=masks,
             bbox_labels=bbox_labels)
+
         data['img'] = aug['image']
         data['img_shape'] = data['img'].shape
         if 'gt_bboxes' in data:
@@ -156,23 +165,8 @@ class Alaug(object):
                 return None
         if 'gt_masks' in data:
             data['gt_masks'] = [np.array(aug['mask'])]
-        if 'gt_keypoints' in data:
-            kp_list = [[0 for j in range(i * 2)] for i in keypoints_index]
-            for i in range(len(keypoints_index)):
-                for j in range(keypoints_index[i]):
-                    kp_list[i][2 * j] = aug['keypoints'][
-                        self.cal_sum_list(keypoints_index, i) + j][0]
-                    kp_list[i][2 * j + 1] = aug['keypoints'][
-                        self.cal_sum_list(keypoints_index, i) + j][1]
-            data['gt_keypoints'] = []
-            valid = []
-            for i in range(kp_group_num):
-                index = int(aug['bboxes'][i][-1])
-                valid.append(index)
-                data['gt_keypoints'].append(kp_list[index])
-            data['gt_keypoints_ignore'] = data['gt_keypoints_ignore'][valid]
 
-        if 'gt_points' in data:
+        if 'gt_points' in data or 'lanes' in data:
             start_idx = num_keypoints if 'gt_keypoints' in data else 0
             points = aug['keypoints'][start_idx:]
             kp_list = [[0 for j in range(i * 2)] for i in points_index]

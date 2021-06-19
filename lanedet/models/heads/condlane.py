@@ -960,9 +960,7 @@ class CondLaneHead(nn.Module):
         h_mask, w_mask = f_mask.size()[2:]
         hms, params = z['hm'], z['params']
         hms = torch.clamp(hms.sigmoid(), min=1e-4, max=1 - 1e-4)
-        print(params.shape)
         params = params.view(m_batchsize, self.num_classes, -1, h_hm, w_hm)
-        print(params.shape)
         # with Timer("Elapsed time in two branch: %f"):  # 0.6ms
         mask_branchs = self.mask_branch(f_mask)
         reg_branchs = mask_branchs
