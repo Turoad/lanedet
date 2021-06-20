@@ -23,7 +23,7 @@ class Detector(nn.Module):
         fea = self.backbone(batch['img'])
 
         if self.aggregator:
-            fea = self.aggregator(fea[-1])
+            fea[-1] = self.aggregator(fea[-1])
 
         if self.neck:
             fea = self.neck(fea)

@@ -52,15 +52,12 @@ class CULane(BaseDataset):
         lanes = [[(lane[i], lane[i + 1]) for i in range(0, len(lane), 2) if lane[i] >= 0 and lane[i + 1] >= 0]
                  for lane in data]
         lanes = [list(set(lane)) for lane in lanes]  # remove duplicated points
-        lanes = [lane for lane in lanes if len(lane) >= 2]  # remove lanes with less than 2 points
+        lanes = [lane for lane in lanes if len(lane) > 3]  # remove lanes with less than 2 points
 
         lanes = [sorted(lane, key=lambda x: x[1]) for lane in lanes]  # sort by y
         # gt_points = [[float(lane[i]) for i in range(len(lane))] for lane in data]
         # gt_points = [gt_point for gt_point in gt_points if len(gt_point) > 3]
         infos['lanes'] = lanes
-        #infos['gt_points'] = gt_points
-        infos['id_classes'] = [1 for i in range(len(gt_points))]
-        infos['id_instances'] = [i + 1 for i in range(len(gt_points))]
 
         return infos
 

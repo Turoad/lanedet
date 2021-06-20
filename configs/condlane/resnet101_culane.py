@@ -61,7 +61,7 @@ heads=dict(
     location_configs=dict(size=(batch_size, 1, 80, 200), device='cuda:0')
 )
 
-optimizer = dict(type='Adam', lr=6e-4, betas=(0.9, 0.999), eps=1e-8)
+optimizer = dict(type='AdamW', lr=3e-4, betas=(0.9, 0.999), eps=1e-8)
 
 epochs = 16
 total_iter = (88880 // batch_size) * epochs
@@ -209,4 +209,4 @@ dataset = dict(
 
 workers = 12 
 log_interval = 1000
-
+lr_update_by_epoch=True
