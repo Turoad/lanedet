@@ -12,3 +12,6 @@ imgaug>=0.4.0
 Shapely==1.7.0
 ujson==1.35
 yapf
+albumentations==0.4.6
+mmcv==0.5.6
+pathspec

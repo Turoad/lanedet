@@ -1,11 +1,11 @@
 import torch.nn as nn
 import torch
 
-from lanedet.models.registry import NET
+from lanedet.models.registry import NETS
 from ..registry import build_backbones, build_aggregator, build_heads, build_necks
 
 
-@NET.register_module
+@NETS.register_module
 class Detector(nn.Module):
     def __init__(self, cfg):
         super(Detector, self).__init__()

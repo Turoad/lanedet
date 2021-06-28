@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch.hub import load_state_dict_from_url
 
-from lanedet.models.registry import BACKBONE
+from lanedet.models.registry import BACKBONES
 
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
@@ -114,7 +114,7 @@ class Bottleneck(nn.Module):
         return out
 
 
-@BACKBONE.register_module
+@BACKBONES.register_module
 class ResNetWrapper(nn.Module):
 
     def __init__(self, 

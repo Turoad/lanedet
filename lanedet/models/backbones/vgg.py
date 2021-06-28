@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch.hub import load_state_dict_from_url
 
-from lanedet.models.registry import BACKBONE 
+from lanedet.models.registry import BACKBONES 
 
 model_urls = {
     'vgg11': 'https://download.pytorch.org/models/vgg11-bbd30ac9.pth',
@@ -18,7 +18,7 @@ model_urls = {
 
 
 
-@BACKBONE.register_module
+@BACKBONES.register_module
 class VGG(nn.Module):
     def __init__(self, cfg):
         super(VGG, self).__init__()
@@ -107,4 +107,4 @@ class VGG(nn.Module):
         x = F.relu(self.bn6(self.conv6(x)))
         x = F.relu(self.bn7(self.conv7(x)))
 
-        return x
+        return [x]

@@ -84,7 +84,7 @@ class LaneATT(nn.Module):
         conf_threshold=param.conf_threshold
         nms_thres=param.nms_thres
         nms_topk=param.nms_topk
-        #batch_features = self.feature_extractor(x)
+        x = x[-1]
         batch_features = self.conv1(x)
         batch_anchor_features = self.cut_anchor_features(batch_features)
 

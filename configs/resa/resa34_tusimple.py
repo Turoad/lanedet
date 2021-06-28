@@ -103,3 +103,4 @@ log_interval = 100
 eval_ep = 1
 save_ep = epochs
 test_json_file='data/tusimple/test_label.json'
+lr_update_by_epoch = False

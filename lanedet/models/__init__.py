@@ -1,6 +1,6 @@
 from .backbones import *
-from .aggregator import *
+from .aggregators import *
 from .heads import *
-from .net import *
+from .nets import *
 from .necks import *
 

@@ -11,8 +11,6 @@ backbone = dict(
 )
 featuremap_out_channel = 512
 
-aggregator=None
-
 griding_num = 100
 num_classes = 6
 heads = dict(type='LaneCls',
@@ -111,3 +109,4 @@ eval_ep = 1
 save_ep = epochs
 row_anchor='tusimple_row_anchor'
 test_json_file='data/tusimple/test_label.json'
+lr_update_by_epoch = False

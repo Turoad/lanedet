@@ -3,10 +3,10 @@ from torch import nn
 import torch.nn.functional as F
 from torch.hub import load_state_dict_from_url
 
-from lanedet.models.registry import AGGREGATOR 
+from lanedet.models.registry import AGGREGATORS 
 
 
-@AGGREGATOR.register_module
+@AGGREGATORS.register_module
 class SCNN(nn.Module):
     def __init__(self, cfg=None):
         super(SCNN, self).__init__()

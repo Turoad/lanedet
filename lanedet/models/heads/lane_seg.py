@@ -94,6 +94,7 @@ class LaneSeg(nn.Module):
 
     def forward(self, x, **kwargs):
         output = {}
+        x = x[-1]
         output.update(self.decoder(x))
         if self.exist:
             output.update(self.exist(x))

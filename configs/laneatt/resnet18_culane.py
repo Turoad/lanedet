@@ -12,8 +12,6 @@ backbone = dict(
 featuremap_out_channel = 512 
 featuremap_out_stride = 32 
 
-aggregator = None
-
 num_points = 72
 max_lanes = 4
 sample_y = range(589, 230, -20)
@@ -117,3 +115,4 @@ dataset = dict(
 workers = 12
 log_interval = 100
 seed=0
+lr_update_by_epoch = False

@@ -2,7 +2,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from lanedet.models.registry import AGGREGATOR 
+from lanedet.models.registry import AGGREGATORS 
 
 from mmcv.cnn import ConvModule
 
@@ -119,7 +119,7 @@ class AttentionLayer(nn.Module):
         out_feat = self.final_conv(out_feat)
         return out_feat
 
-@AGGREGATOR.register_module
+@AGGREGATORS.register_module
 class TransConvEncoderModule(nn.Module):
     def __init__(self, in_dim, attn_in_dims, attn_out_dims, strides, ratios, downscale=True, pos_shape=None, cfg=None):
         super(TransConvEncoderModule, self).__init__()

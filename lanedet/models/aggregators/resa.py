@@ -3,10 +3,10 @@ from torch import nn
 import torch.nn.functional as F
 from torch.hub import load_state_dict_from_url
 
-from lanedet.models.registry import AGGREGATOR 
+from lanedet.models.registry import AGGREGATORS 
 from .aspp import ASPP
 
-@AGGREGATOR.register_module
+@AGGREGATORS.register_module
 class RESA(nn.Module):
     def __init__(self,
             direction,

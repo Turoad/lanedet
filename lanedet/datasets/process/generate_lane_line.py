@@ -139,7 +139,7 @@ class GenerateLaneLine(object):
                     self.logger.critical('Transform annotation failed 30 times :(')
                     exit()
 
-        sample['img'] = img / 255.
+        sample['img'] = (img / 255.).astype(np.float32)
         sample['lane_line'] = label
 
         return sample

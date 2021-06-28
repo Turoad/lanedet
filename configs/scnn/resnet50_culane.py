@@ -100,3 +100,4 @@ num_classes = 4 + 1
 ignore_label = 255
 log_interval = 1000
 
+lr_update_by_epoch = False

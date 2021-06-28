@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.init as init
 import torch.nn.functional as F
-from lanedet.models.registry import BACKBONE 
+from lanedet.models.registry import BACKBONES
 
 
 class DownsamplerBlock(nn.Module):
@@ -155,7 +155,7 @@ class Lane_exist(nn.Module):
         return output
 
 
-@BACKBONE.register_module
+@BACKBONES.register_module
 class ERFNet(nn.Module):
     def __init__(self, cfg):  # use encoder to pass pretrained encoder
         super().__init__()
@@ -164,4 +164,4 @@ class ERFNet(nn.Module):
 
     def forward(self, input):
         output = self.encoder(input)  # predict=False by default
-        return output
+        return [output]
