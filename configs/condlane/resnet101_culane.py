@@ -15,7 +15,7 @@ featuremap_out_channel = 128
 featuremap_out_stride = 8
 sample_y = range(589, 230, -20)
 
-batch_size = 4
+batch_size = 8
 aggregator = dict(
     type='TransConvEncoderModule',
     in_dim=2048,
@@ -73,8 +73,8 @@ scheduler = dict(
 )
 
 seg_loss_weight = 1.0
-eval_ep = 2
-save_ep = 2 
+eval_ep = 1
+save_ep = 1 
 
 img_norm = dict(
     mean=[75.3, 76.6, 77.6],

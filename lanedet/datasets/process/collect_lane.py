@@ -254,7 +254,6 @@ class CollectLane(object):
         #     for j in range(len(endpoints)):
         #         dis = min_dis_one_point(endpoints, j)
         #         if dis < 1.5 * radius[j]:
-        #             raise False
         #             radius[j] = int(max(dis / 1.5, 1) + 0.49999)
 
         for (end_point, line), r in zip(gt_hm_lane_ends, radius):
