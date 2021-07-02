@@ -19,14 +19,13 @@ Supported backbones:
 - [x] ERFNet
 - [x] VGG
 - [x] MobileNet
-- [ ] DLA (comming soon)
 
 Supported detectors:
 - [x] [SCNN](configs/scnn)
 - [x] [UFLD](configs/ufld)
 - [x] [RESA](configs/resa)
 - [x] [LaneATT](configs/laneatt)
-- [ ] LaneAF (comming soon)
+- [x] [CondLane] (in branch [condlane](https://github.com/Turoad/lanedet/tree/condlane), will be merged soon)
 
 ## Installation
 <!--
