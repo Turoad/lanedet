@@ -25,7 +25,7 @@ class Detect(object):
     def preprocess(self, img_path):
         ori_img = cv2.imread(img_path)
         img = ori_img[self.cfg.cut_height:, :, :].astype(np.float32)
-        data = {'img': img}
+        data = {'img': img, 'lanes': []}
         data = self.processes(data)
         data['img'] = data['img'].unsqueeze(0)
         data.update({'img_path':img_path, 'ori_img':ori_img})

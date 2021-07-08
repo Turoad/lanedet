@@ -705,9 +705,8 @@ class CondLaneHead(nn.Module):
         self.feat_width = location_configs['size'][-1]
         self.mlp = MLP(self.feat_width, 64, 2, 2)
 
-        # TODO(check)
         self.post_process = CondLanePostProcessor(
-                mask_size=(1, 80, 200), hm_thr=0.5, use_offset=True,
+                mask_size=self.cfg.mask_size, hm_thr=0.5, use_offset=True,
                 nms_thr=4)
 
         self.loss_impl = CondLaneLoss(cfg.loss_weights, 1)
@@ -749,10 +748,6 @@ class CondLaneHead(nn.Module):
             gts['row']).to(device)).unsqueeze(0).unsqueeze(0)
         row_mask = (torch.from_numpy(
             gts['row_mask']).to(device)).unsqueeze(0).unsqueeze(0)
-        # reg = (gts['reg']).to(device)#.unsqueeze(0)
-        # reg_mask = (gts['reg_mask']).to(device)#.unsqueeze(0)
-        # row = (gts['row']).to(device).unsqueeze(0)#.unsqueeze(0)
-        # row_mask = (gts['row_mask']).to(device).unsqueeze(0)#.unsqueeze(0)
         if 'range' in gts:
             lane_range = torch.from_numpy(gts['range']).to(device) # new add: squeeze 
             #lane_range = (gts['range']).to(device).squeeze(0) # new add: squeeze 
@@ -782,19 +777,12 @@ class CondLaneHead(nn.Module):
             for m in m_img:
                 gts = self.parse_gt(m, device=device)
                 reg, reg_mask, row, row_mask, lane_range = gts
-                # print('reg: ', reg.shape)
-                # print('reg_mask: ', reg_mask.shape)
-                # print('row ns:', row.shape)
-                # print('row_mask:', row_mask.shape)
-                # print('lane_range:', lane_range.shape)
                 label = m['label']
                 num += len(m['points'])
                 for p in m['points']:
                     pos = idx * n * hm_h * hm_w + label * hm_h * hm_w + p[
                         1] * hm_w + p[0]
-                    # pos = [idx, label, p[1], p[0]]
                     poses.append(pos)
-                # m['label'] = torch.from_numpy(np.array(m['label'])).to(device)
                 for i in range(len(m['points'])):
                     labels.append(label)
                     regs.append(reg)
@@ -878,8 +866,8 @@ class CondLaneHead(nn.Module):
     def forward_train(self, output, batch):
         img_metas = batch['img_metas']
         gt_batch_masks = [m['gt_masks'] for m in img_metas]
-        hm_shape = [20, 50]
-        mask_shape = [80, 200]
+        hm_shape = img_metas[0]['hm_shape']
+        mask_shape = img_metas[0]['mask_shape']
         inputs = output
         pos, labels, num_ins, gts = self.parse_pos(
             gt_batch_masks, hm_shape, inputs[0].device, mask_shape=mask_shape)
@@ -1025,17 +1013,13 @@ class CondLaneHead(nn.Module):
 
     def get_lanes(self, output):
         out_seeds, out_hm = output['seeds'], output['hm']
-        #TODO
         ret = []
         for seeds, hm in zip(out_seeds, out_hm):
-            downscale=4
-            lanes, seed = self.post_process(seeds, downscale)
-            crop_bbox = [0, 270, 1640, 590]
-            img_shape = (320, 800, 3) 
+            lanes, seed = self.post_process(seeds, self.cfg.mask_down_scale)
             result = adjust_result(
                     lanes=lanes,
-                    crop_bbox=crop_bbox,
-                    img_shape=img_shape,
+                    crop_bbox=self.cfg.crop_bbox,
+                    img_shape=self.cfg.img_scale,
                     tgt_shape=(590, 1640),
                     )
             lanes = []
@@ -1044,7 +1028,6 @@ class CondLaneHead(nn.Module):
                 for x, y in lane:
                     coord.append([x, y])
                 coord = np.array(coord)
-                #coord = np.flip(coord, axis=0)
                 coord[:, 0] /= self.cfg.ori_img_w
                 coord[:, 1] /= self.cfg.ori_img_h
                 lanes.append(Lane(coord))

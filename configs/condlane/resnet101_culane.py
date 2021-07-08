@@ -11,8 +11,6 @@ backbone = dict(
     in_channels=[64, 128, 256, 512]
 )
 
-featuremap_out_channel = 128
-featuremap_out_stride = 8
 sample_y = range(589, 230, -20)
 
 batch_size = 8
@@ -95,6 +93,7 @@ radius = 6
 nms_thr = 4
 img_scale = (800, 320)
 crop_bbox = [0, 270, 1640, 590]
+mask_size = (1, 80, 200)
 
 train_process = [
     dict(type='Alaug',

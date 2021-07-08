@@ -33,6 +33,5 @@ class Detector(nn.Module):
             output.update(self.heads.loss(out, batch))
         else:
             output = self.heads(fea)
-            output = self.heads.get_lanes(output)
 
         return output

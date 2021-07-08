@@ -110,7 +110,11 @@ class FPN(nn.Module):
 
     def forward(self, inputs):
         """Forward function."""
-        assert len(inputs) == len(self.in_channels)
+        assert len(inputs) >= len(self.in_channels)
+
+        if len(inputs) > len(self.in_channels):
+            for _ in range(len(inputs) - len(self.in_channels)):
+                del inputs[0]
 
         # build laterals
         laterals = [
