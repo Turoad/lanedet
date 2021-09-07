@@ -60,7 +60,7 @@ class CULane(BaseDataset):
         return infos
 
     def get_prediction_string(self, pred):
-        ys = np.arange(270, 590, 8) / self.cfg.ori_img_h
+        ys = np.array(list(self.cfg.sample_y))[::-1] / self.cfg.ori_img_h
         out = []
         for lane in pred:
             xs = lane(ys)

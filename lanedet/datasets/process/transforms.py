@@ -45,11 +45,8 @@ class ToTensor(object):
     def __call__(self, sample):
         data = {}
         if len(sample['img'].shape) < 3:
-            sample['img'] = np.expand_dims(img, -1)
+            sample['img'] = np.expand_dims(sample['img'], -1)
         for key in self.keys:
-            if key == 'img_metas' or key == 'gt_masks':
-                data[key] = sample[key]
-                continue
             data[key] = to_tensor(sample[key])
         data['img'] = data['img'].permute(2, 0, 1)
         return data

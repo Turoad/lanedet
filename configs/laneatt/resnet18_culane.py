@@ -14,7 +14,7 @@ featuremap_out_stride = 32
 
 num_points = 72
 max_lanes = 4
-sample_y = range(589, 230, -20)
+sample_y = range(589, 230, -1)
 
 heads = dict(type='LaneATT',
         anchors_freq_path='.cache/culane_anchors_freq.pt',

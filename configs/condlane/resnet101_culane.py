@@ -11,7 +11,7 @@ backbone = dict(
     in_channels=[64, 128, 256, 512]
 )
 
-sample_y = range(589, 230, -20)
+sample_y = range(590, 270, -8)
 
 batch_size = 8
 aggregator = dict(
@@ -163,7 +163,7 @@ train_process = [
     ),
     #dict(type='Resize', size=(img_width, img_height)),
     dict(type='Normalize', img_norm=img_norm),
-    dict(type='ToTensor', keys=['img', 'img_metas', 'gt_hm']),
+    dict(type='ToTensor', keys=['img', 'gt_hm']),
 ]
 
 

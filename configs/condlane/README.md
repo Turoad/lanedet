@@ -14,4 +14,4 @@
 ## Models
 | Architecture| Backbone |Dataset | Metric | Config| Checkpoints  |
 |-------------|----------|--------|--------|-------|--------------|
-| CondLane   | ResNet101 | CULane | F1: 76.46| [config]()  |[model](https://github.com/Turoad/lanedet/releases/download/1.0/condlane_r101_culane.pth.zip) |
+| CondLane   | ResNet101 | CULane | F1: 79.47| [config](configs/condlane/resnet101_culane.py)  |[model](https://github.com/Turoad/lanedet/releases/download/1.0/condlane_r101_culane.pth.zip) |
