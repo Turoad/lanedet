@@ -27,6 +27,7 @@ Supported detectors:
 - [x] [LaneATT](configs/laneatt)
 - [x] [CondLane](configs/condlane)
 
+
 ## Installation
 <!--
 Please refer to [INSTALL.md](INSTALL.md) for installation.
