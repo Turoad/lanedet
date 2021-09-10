@@ -232,8 +232,6 @@ class CollectLane(object):
         valid_gt = []
         for pts in gt_points:
             id_class = 1
-            # pts = np.array(pts) / self.down_scale
-            #pts = [(pt[0]/self.down_scale, pt[1]/self.down_scale) for pt in pts]
             pts = convert_list(pts, self.down_scale)
             pts = sorted(pts, key=cmp_to_key(lambda a, b: b[-1] - a[-1]))
             pts = clamp_line(
@@ -249,12 +247,6 @@ class CollectLane(object):
             gt_hm_lane_ends.append([point, l[0]])
         radius = [self.radius for _ in range(len(gt_hm_lane_ends))]
 
-        # if len(gt_hm_lane_ends) >= 2:
-        #     endpoints = [p[0] for p in gt_hm_lane_ends]
-        #     for j in range(len(endpoints)):
-        #         dis = min_dis_one_point(endpoints, j)
-        #         if dis < 1.5 * radius[j]:
-        #             radius[j] = int(max(dis / 1.5, 1) + 0.49999)
 
         for (end_point, line), r in zip(gt_hm_lane_ends, radius):
             pos = np.zeros((mask_h), np.float32)
@@ -305,7 +297,7 @@ class CollectLane(object):
                 'label': 0
             })
 
-        results['gt_hm'] = gt_hm#DC(to_tensor(gt_hm).float(), stack=True, pad_dims=None)
+        results['gt_hm'] = gt_hm
         results['gt_masks'] = gt_masks
         results['down_scale'] = self.down_scale
         results['hm_down_scale'] = self.hm_down_scale

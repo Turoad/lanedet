@@ -238,15 +238,6 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-        # x = self.layer1(x)
-        # x = self.layer2(x)
-        # out_layers.append(x)
-        # x = self.layer3(x)
-        # out_layers.append(x)
-        # if self.in_channels[3] > 0:
-        #     x = self.layer4(x)
-        #     out_layers.append(x)
-
         out_layers = [] 
         for name in ['layer1', 'layer2', 'layer3', 'layer4']:
             if not hasattr(self, name):
@@ -254,7 +245,6 @@ class ResNet(nn.Module):
             layer = getattr(self, name)
             x = layer(x)
             out_layers.append(x)
-            #out_layer[name] = x
 
         return out_layers 
 
@@ -262,7 +252,6 @@ class ResNet(nn.Module):
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        # state_dict = torch.load(model_urls[arch])['net']
         state_dict = load_state_dict_from_url(model_urls[arch])
         model.load_state_dict(state_dict, strict=False)
     return model
