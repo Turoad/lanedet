@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch.hub import load_state_dict_from_url
 
-from lanedet.models.registry import AGGREGATOR 
+from lanedet.models.registry import AGGREGATORS 
 
 class Atrous_module(nn.Module):
     def __init__(self, inplanes, planes, rate):
@@ -19,7 +19,7 @@ class Atrous_module(nn.Module):
         return x
 
 
-@AGGREGATOR.register_module
+@AGGREGATORS.register_module
 class ASPP(nn.Module):
     def __init__(self, cfg):
         super(ASPP, self).__init__()

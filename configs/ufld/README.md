@@ -14,5 +14,5 @@ year = {2020}
 ## Models
 | Architecture| Backbone |Dataset | Metric | Config| Checkpoints  |
 |-------------|----------|--------|--------|-------|--------------|
-| UFLD | ResNet18 | CULane |F1: 69.99| [config](https://github.com/Turoad/lanedet/blob/main/configs/ufld/resa18_culane.py)  | [model](https://github.com/Turoad/lanedet/releases/download/1.0/ufld_r18_culane.zip)|
+| UFLD | ResNet18 | CULane |F1: 69.47| [config](https://github.com/Turoad/lanedet/blob/main/configs/ufld/resa18_culane.py)  | [model](https://github.com/Turoad/lanedet/releases/download/1.0/ufld_r18_culane.zip)|
 | UFLD | ResNet18 | Tusimple |acc: 95.86| [config](https://github.com/Turoad/lanedet/blob/main/configs/ufld/resa18_culane.py)  | [model](https://github.com/Turoad/lanedet/releases/download/1.0/ufld_r18_tusimple.zip)|

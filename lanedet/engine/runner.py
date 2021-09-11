@@ -13,6 +13,7 @@ from .scheduler import build_scheduler
 from lanedet.datasets import build_dataloader
 from lanedet.utils.recorder import build_recorder
 from lanedet.utils.net_utils import save_model, load_network
+from mmcv.parallel import MMDataParallel 
 
 
 class Runner(object):
@@ -24,7 +25,9 @@ class Runner(object):
         self.recorder = build_recorder(self.cfg)
         self.net = build_net(self.cfg)
         # self.net.to(torch.device('cuda'))
-        self.net = torch.nn.parallel.DataParallel(
+        # self.net = torch.nn.parallel.DataParallel(
+        #         self.net, device_ids = range(self.cfg.gpus)).cuda()
+        self.net = MMDataParallel(
                 self.net, device_ids = range(self.cfg.gpus)).cuda()
         self.recorder.logger.info('Network: \n' + str(self.net))
         self.resume()
@@ -46,7 +49,7 @@ class Runner(object):
 
     def to_cuda(self, batch):
         for k in batch:
-            if k == 'meta':
+            if not isinstance(k, torch.Tensor):
                 continue
             batch[k] = batch[k].cuda()
         return batch
@@ -66,7 +69,8 @@ class Runner(object):
             loss = output['loss']
             loss.backward()
             self.optimizer.step()
-            self.scheduler.step()
+            if not self.cfg.lr_update_by_epoch:
+                self.scheduler.step()
             if self.warmup_scheduler:
                 self.warmup_scheduler.dampen()
             batch_time = time.time() - end
@@ -94,6 +98,8 @@ class Runner(object):
                 self.validate()
             if self.recorder.step >= self.cfg.total_iter:
                 break
+            if self.cfg.lr_update_by_epoch:
+                self.scheduler.step()
 
     def validate(self):
         if not self.val_loader:
@@ -104,6 +110,7 @@ class Runner(object):
             data = self.to_cuda(data)
             with torch.no_grad():
                 output = self.net(data)
+                output = self.net.module.get_lanes(output)
                 predictions.extend(output)
             if self.cfg.view:
                 self.val_loader.dataset.view(output, data['meta'])

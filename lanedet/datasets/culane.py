@@ -52,7 +52,7 @@ class CULane(BaseDataset):
         lanes = [[(lane[i], lane[i + 1]) for i in range(0, len(lane), 2) if lane[i] >= 0 and lane[i + 1] >= 0]
                  for lane in data]
         lanes = [list(set(lane)) for lane in lanes]  # remove duplicated points
-        lanes = [lane for lane in lanes if len(lane) >= 2]  # remove lanes with less than 2 points
+        lanes = [lane for lane in lanes if len(lane) > 3]  # remove lanes with less than 2 points
 
         lanes = [sorted(lane, key=lambda x: x[1]) for lane in lanes]  # sort by y
         infos['lanes'] = lanes
@@ -60,8 +60,7 @@ class CULane(BaseDataset):
         return infos
 
     def get_prediction_string(self, pred):
-        ys = np.arange(self.cfg.ori_img_h) / self.cfg.ori_img_h
-        ys = np.arange(239, 590, 1) / self.cfg.ori_img_h
+        ys = np.array(list(self.cfg.sample_y))[::-1] / self.cfg.ori_img_h
         out = []
         for lane in pred:
             xs = lane(ys)

@@ -79,12 +79,12 @@ class LaneATT(nn.Module):
         self.cut_xs = self.cut_xs.cuda()
         self.invalid_mask = self.invalid_mask.cuda()
 
-    def forward(self, x, conf_threshold=None, nms_thres=0, nms_topk=3000):
+    def forward(self, x, **kwargs):
         param = self.cfg.train_parameters if self.training else self.cfg.test_parameters
         conf_threshold=param.conf_threshold
         nms_thres=param.nms_thres
         nms_topk=param.nms_topk
-        #batch_features = self.feature_extractor(x)
+        x = x[-1]
         batch_features = self.conv1(x)
         batch_anchor_features = self.cut_anchor_features(batch_features)
 
@@ -439,42 +439,3 @@ class LaneATT(nn.Module):
             decoded.append(pred)
 
         return decoded
-
-    def cuda(self, device=None):
-        cuda_self = super().cuda(device)
-        cuda_self.anchors = cuda_self.anchors.cuda(device)
-        cuda_self.anchor_ys = cuda_self.anchor_ys.cuda(device)
-        cuda_self.cut_zs = cuda_self.cut_zs.cuda(device)
-        cuda_self.cut_ys = cuda_self.cut_ys.cuda(device)
-        cuda_self.cut_xs = cuda_self.cut_xs.cuda(device)
-        cuda_self.invalid_mask = cuda_self.invalid_mask.cuda(device)
-        return cuda_self
-
-    def to_device(self, *args, **kwargs):
-        # device_self = self#super().to(*args, **kwargs)
-        self.anchors = self.anchors.to(*args, **kwargs)
-        self.anchor_ys = self.anchor_ys.to(*args, **kwargs)
-        self.cut_zs = self.cut_zs.to(*args, **kwargs)
-        self.cut_ys = self.cut_ys.to(*args, **kwargs)
-        self.cut_xs = self.cut_xs.to(*args, **kwargs)
-        self.invalid_mask = self.invalid_mask.to(*args, **kwargs)
-        return self
-
-
-def get_backbone(backbone, pretrained=False):
-    if backbone == 'resnet122':
-        backbone = resnet122_cifar()
-        fmap_c = 64
-        stride = 4
-    elif backbone == 'resnet34':
-        backbone = torch.nn.Sequential(*list(resnet34(pretrained=pretrained).children())[:-2])
-        fmap_c = 512
-        stride = 32
-    elif backbone == 'resnet18':
-        backbone = torch.nn.Sequential(*list(resnet18(pretrained=pretrained).children())[:-2])
-        fmap_c = 512
-        stride = 32
-    else:
-        raise NotImplementedError('Backbone not implemented: `{}`'.format(backbone))
-
-    return backbone, fmap_c, stride

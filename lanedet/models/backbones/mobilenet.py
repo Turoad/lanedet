@@ -4,7 +4,7 @@ from torch import Tensor
 from torchvision.models.utils import load_state_dict_from_url
 from typing import Callable, Any, Optional, List
 
-from lanedet.models.registry import BACKBONE
+from lanedet.models.registry import BACKBONES
 
 
 model_urls = {
@@ -182,7 +182,7 @@ class MobileNetV2(nn.Module):
         x = self.features(x)
         return x
 
-@BACKBONE.register_module
+@BACKBONES.register_module
 class MobileNet(nn.Module):
     def __init__(self, 
                 net = 'MobileNetV2',
@@ -199,4 +199,4 @@ class MobileNet(nn.Module):
 
     def forward(self, x):
         x = self.model(x)
-        return x
+        return [x]

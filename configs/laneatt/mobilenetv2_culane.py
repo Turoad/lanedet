@@ -11,11 +11,9 @@ backbone = dict(
 featuremap_out_channel = 1280
 featuremap_out_stride = 32 
 
-aggregator = None
-
 num_points = 72
 max_lanes = 4
-sample_y = range(589, 230, -20)
+sample_y = range(589, 230, -1)
 
 heads = dict(type='LaneATT',
         anchors_freq_path='.cache/culane_anchors_freq.pt',
@@ -116,3 +114,4 @@ dataset = dict(
 workers = 12
 log_interval = 1000
 seed=0
+lr_update_by_epoch = False

@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch.hub import load_state_dict_from_url
 
-from lanedet.models.registry import BACKBONE
+from lanedet.models.registry import BACKBONES
 
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
@@ -114,7 +114,7 @@ class Bottleneck(nn.Module):
         return out
 
 
-@BACKBONE.register_module
+@BACKBONES.register_module
 class ResNetWrapper(nn.Module):
 
     def __init__(self, 
@@ -146,7 +146,7 @@ class ResNetWrapper(nn.Module):
     def forward(self, x):
         x = self.model(x)
         if self.out:
-            x = self.out(x)
+            x[-1] = self.out(x[-1])
         return x
 
 
@@ -238,24 +238,20 @@ class ResNet(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        if self.in_channels[3] > 0:
-            x = self.layer4(x)
+        out_layers = [] 
+        for name in ['layer1', 'layer2', 'layer3', 'layer4']:
+            if not hasattr(self, name):
+                continue
+            layer = getattr(self, name)
+            x = layer(x)
+            out_layers.append(x)
 
-        # x = self.avgpool(x)
-        # x = torch.flatten(x, 1)
-        # x = self.fc(x)
-
-        return x
+        return out_layers 
 
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        print('pretrained model: ', model_urls[arch])
-        # state_dict = torch.load(model_urls[arch])['net']
         state_dict = load_state_dict_from_url(model_urls[arch])
         model.load_state_dict(state_dict, strict=False)
     return model

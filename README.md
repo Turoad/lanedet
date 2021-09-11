@@ -25,7 +25,8 @@ Supported detectors:
 - [x] [UFLD](configs/ufld)
 - [x] [RESA](configs/resa)
 - [x] [LaneATT](configs/laneatt)
-- [x] [CondLane] (in branch [condlane](https://github.com/Turoad/lanedet/tree/condlane), will be merged soon)
+- [x] [CondLane](configs/condlane)
+
 
 ## Installation
 <!--
@@ -181,6 +182,7 @@ This project is released under the [Apache 2.0 license](LICNESE).
 * [ZJULearning/resa](https://github.com/ZJULearning/resa)
 * [cfzd/Ultra-Fast-Lane-Detection](https://github.com/cfzd/Ultra-Fast-Lane-Detection)
 * [lucastabelini/LaneATT](https://github.com/lucastabelini/LaneATT)
+* [aliyun/conditional-lane-detection](https://github.com/aliyun/conditional-lane-detection)
 <!--te-->
 
 <!-- 

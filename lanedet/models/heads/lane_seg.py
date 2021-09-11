@@ -57,7 +57,7 @@ class LaneSeg(nn.Module):
                 x = value*self.cfg.ori_img_w/self.cfg.img_width#-1.
                 if x > 0:
                     coord.append([x, y])
-            if len(coord) < 2:
+            if len(coord) < 5:
                 continue
 
             coord = np.array(coord)
@@ -92,8 +92,9 @@ class LaneSeg(nn.Module):
         return ret
 
 
-    def forward(self, x):
+    def forward(self, x, **kwargs):
         output = {}
+        x = x[-1]
         output.update(self.decoder(x))
         if self.exist:
             output.update(self.exist(x))

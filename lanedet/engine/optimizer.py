@@ -1,10 +1,5 @@
 import torch
 
-_optimizer_factory = {
-    'adam': torch.optim.Adam,
-    'sgd': torch.optim.SGD
-}
-
 
 def build_optimizer(cfg, net):
     params = []

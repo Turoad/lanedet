@@ -11,8 +11,6 @@ backbone = dict(
 )
 featuremap_out_channel = 512
 
-aggregator=None
-
 griding_num = 200
 num_classes = 4
 heads = dict(type='LaneCls',
@@ -94,3 +92,4 @@ log_interval = 100
 eval_ep = epochs // 5
 save_ep = epochs
 y_pixel_gap = 20
+lr_update_by_epoch = False

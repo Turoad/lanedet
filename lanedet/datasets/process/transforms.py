@@ -23,8 +23,6 @@ def to_tensor(data):
         return data
     elif isinstance(data, np.ndarray):
         return torch.from_numpy(data)
-    elif isinstance(data, Sequence) and not mmcv.is_str(data):
-        return torch.tensor(data)
     elif isinstance(data, int):
         return torch.LongTensor([data])
     elif isinstance(data, float):
@@ -47,7 +45,7 @@ class ToTensor(object):
     def __call__(self, sample):
         data = {}
         if len(sample['img'].shape) < 3:
-            sample['img'] = np.expand_dims(img, -1)
+            sample['img'] = np.expand_dims(sample['img'], -1)
         for key in self.keys:
             data[key] = to_tensor(sample[key])
         data['img'] = data['img'].permute(2, 0, 1)

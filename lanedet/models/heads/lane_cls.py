@@ -83,7 +83,8 @@ class LaneCls(nn.Module):
             ret.append(lanes)
         return ret
 
-    def forward(self, x):
+    def forward(self, x, **kwargs):
+        x = x[-1]
         x = self.pool(x).view(-1, 1800)
         cls = self.cls(x).view(-1, *self.dim)
         output = {'cls': cls}

@@ -11,6 +11,7 @@ from lanedet.utils.config import Config
 from lanedet.utils.visualization import imshow_lanes
 from lanedet.utils.net_utils import load_network
 from pathlib import Path
+from tqdm import tqdm
 
 class Detect(object):
     def __init__(self, cfg):
@@ -25,7 +26,7 @@ class Detect(object):
     def preprocess(self, img_path):
         ori_img = cv2.imread(img_path)
         img = ori_img[self.cfg.cut_height:, :, :].astype(np.float32)
-        data = {'img': img}
+        data = {'img': img, 'lanes': []}
         data = self.processes(data)
         data['img'] = data['img'].unsqueeze(0)
         data.update({'img_path':img_path, 'ori_img':ori_img})
@@ -34,6 +35,7 @@ class Detect(object):
     def inference(self, data):
         with torch.no_grad():
             data = self.net(data)
+            data = self.net.module.get_lanes(data)
         return data
 
     def show(self, data):
@@ -69,7 +71,7 @@ def process(args):
     cfg.load_from = args.load_from
     detect = Detect(cfg)
     paths = get_img_paths(args.img)
-    for p in paths:
+    for p in tqdm(paths):
         detect.run(p)
 
 if __name__ == '__main__':
