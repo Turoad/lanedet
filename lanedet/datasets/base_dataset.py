@@ -9,6 +9,7 @@ import logging
 from .registry import DATASETS
 from .process import Process
 from lanedet.utils.visualization import imshow_lanes
+from mmcv.parallel import DataContainer as DC
 
 
 @DATASETS.register_module
@@ -22,11 +23,13 @@ class BaseDataset(Dataset):
         self.processes = Process(processes, cfg)
 
 
-    def view(self, predictions, img_meta):
-        img_names = img_meta['img_name']
-        for lanes, img_name in zip(predictions, img_names):
+    def view(self, predictions, img_metas):
+        img_metas = [item for img_meta in img_metas.data for item in img_meta]
+        for lanes, img_meta in zip(predictions, img_metas):
+            img_name = img_meta['img_name']
             img = cv2.imread(osp.join(self.data_root, img_name))
-            out_file = osp.join(self.cfg.work_dir, 'visualization', img_name.replace('/', '_'))
+            out_file = osp.join(self.cfg.work_dir, 'visualization',
+                                img_name.replace('/', '_'))
             lanes = [lane.to_array(self.cfg) for lane in lanes]
             imshow_lanes(img, lanes, out_file=out_file)
 
@@ -53,5 +56,10 @@ class BaseDataset(Dataset):
             sample.update({'mask': label})
 
         sample = self.processes(sample)
+        meta = {'full_img_path': data_info['img_path'],
+                'img_name': data_info['img_name']}
+        meta = DC(meta, cpu_only=True)
+        sample.update({'meta': meta})
+
 
         return sample 
