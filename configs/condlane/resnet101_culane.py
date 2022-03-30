@@ -163,7 +163,7 @@ train_process = [
     ),
     #dict(type='Resize', size=(img_width, img_height)),
     dict(type='Normalize', img_norm=img_norm),
-    dict(type='ToTensor', keys=['img', 'gt_hm']),
+    dict(type='ToTensor', keys=['img', 'gt_hm'], collect_keys=['img_metas']),
 ]
 
 

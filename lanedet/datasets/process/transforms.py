@@ -37,17 +37,22 @@ class ToTensor(object):
 
     Args:
         keys (Sequence[str]): Keys that need to be converted to Tensor.
+        collect_keys (Sequence[str]): Keys that need to keep, but not to Tensor.
     """
 
-    def __init__(self, keys=['img', 'mask'], cfg=None):
+    def __init__(self, keys=['img', 'mask'], collect_keys=[], cfg=None):
         self.keys = keys
+        self.collect_keys = collect_keys
 
     def __call__(self, sample):
         data = {}
         if len(sample['img'].shape) < 3:
             sample['img'] = np.expand_dims(sample['img'], -1)
-        for key in self.keys:
-            data[key] = to_tensor(sample[key])
+        for key in sample.keys():
+            if key in self.keys:
+                data[key] = to_tensor(sample[key])
+            if key in self.collect_keys:
+                data[key] = sample[key]
         data['img'] = data['img'].permute(2, 0, 1)
         return data
 

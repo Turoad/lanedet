@@ -713,6 +713,7 @@ class CondLaneHead(nn.Module):
     
     def loss(self, output, batch):
         img_metas = batch['img_metas']
+        batch.pop('meta')
         return self.loss_impl(output, img_metas, **batch)
 
 
