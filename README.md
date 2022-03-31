@@ -19,6 +19,7 @@ Supported backbones:
 - [x] ERFNet
 - [x] VGG
 - [x] MobileNet
+- [] DLA(coming soon)
 
 Supported detectors:
 - [x] [SCNN](configs/scnn)
@@ -26,6 +27,7 @@ Supported detectors:
 - [x] [RESA](configs/resa)
 - [x] [LaneATT](configs/laneatt)
 - [x] [CondLane](configs/condlane)
+- [] CLRNet(coming soon)
 
 
 ## Installation
@@ -51,10 +53,10 @@ conda activate lanedet
 ```Shell
 # Install pytorch firstly, the cudatoolkit version should be same in your system.
 
-conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+conda install pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=10.1 -c pytorch
 
 # Or you can install via pip
-pip install torch torchvision
+pip install torch==1.8.0 torchvision==0.9.0
 
 # Install python packages
 python setup.py build develop
@@ -67,7 +69,7 @@ python setup.py build develop
 Download [CULane](https://xingangpan.github.io/projects/CULane.html). Then extract them to `$CULANEROOT`. Create link to `data` directory.
 
 ```Shell
-cd $RESA_ROOT
+cd $LANEDET_ROOT
 mkdir -p data
 ln -s $CULANEROOT data/CULane
 ```
@@ -83,7 +85,7 @@ $CULANEROOT/list                 # data lists
 Download [Tusimple](https://github.com/TuSimple/tusimple-benchmark/issues/3). Then extract them to `$TUSIMPLEROOT`. Create link to `data` directory.
 
 ```Shell
-cd $RESA_ROOT
+cd $LANEDET_ROOT
 mkdir -p data
 ln -s $TUSIMPLEROOT data/tusimple
 ```
@@ -116,7 +118,7 @@ python main.py [configs/path_to_your_config] --gpus [gpu_ids]
 
 For example, run
 ```Shell
-python main.py configs/resa/resa50_culane.py --gpus 0 1 2 3
+python main.py configs/resa/resa50_culane.py --gpus 0
 ```
 
 ### Testing
@@ -127,7 +129,7 @@ python main.py [configs/path_to_your_config] --validate --load_from [path_to_you
 
 For example, run
 ```Shell
-python main.py configs/resa/resa50_culane.py --validate --load_from culane_resnet50.pth --gpus 0 1 2 3
+python main.py configs/resa/resa50_culane.py --validate --load_from culane_resnet50.pth --gpus 0
 ```
 
 Currently, this code can output the visualization result when testing, just add `--view`.

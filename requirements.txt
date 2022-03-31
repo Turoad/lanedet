@@ -1,5 +1,5 @@
-torch==1.6.0
-torchvision==0.7.0
+torch==1.8.0
+torchvision==0.9.0
 pandas
 addict
 sklearn
@@ -13,5 +13,5 @@ Shapely==1.7.0
 ujson==1.35
 yapf
 albumentations==0.4.6
-mmcv==0.5.6
+mmcv==1.2.5
 pathspec
